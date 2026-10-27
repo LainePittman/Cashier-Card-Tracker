@@ -25,9 +25,10 @@ To try it on your phone, connect to the same Wi-Fi and open the "Network" addres
 ## Connecting Supabase
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In the project, go to **Project Settings → API**.
+2. In the project, click **Connect** at the top of the dashboard (or go to **Project Settings → API Keys**).
 3. Copy `.env.example` to a new file named `.env.local`.
-4. Paste the **Project URL** and the **anon public** key into `.env.local`.
+4. Paste the **Project URL** and the **publishable key** (starts with `sb_publishable_`) into `.env.local`.
 5. Restart `npm run dev`. The setup check on the home page should turn green.
 
 `.env.local` is in `.gitignore`, so the keys stay on your computer.
+Never put the **secret** key in this app. It bypasses all database rules.

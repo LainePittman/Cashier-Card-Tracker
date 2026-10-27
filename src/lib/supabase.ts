@@ -1,10 +1,10 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 const url = import.meta.env.VITE_SUPABASE_URL
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
 /** True once .env.local has both Supabase values filled in. */
-export const isSupabaseConfigured = Boolean(url && anonKey)
+export const isSupabaseConfigured = Boolean(url && publishableKey)
 
 /**
  * The one shared Supabase client for the whole app.
@@ -12,5 +12,5 @@ export const isSupabaseConfigured = Boolean(url && anonKey)
  * show a setup message instead of crashing.
  */
 export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(url!, anonKey!)
+  ? createClient(url!, publishableKey!)
   : null
