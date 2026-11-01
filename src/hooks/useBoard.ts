@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Application, Employee } from '../lib/types'
+import {
+  APPLICATION_COLUMNS,
+  EMPLOYEE_COLUMNS,
+  type Application,
+  type Employee,
+} from '../lib/types'
 
 /**
  * Loads everything the board needs and keeps it live:
@@ -23,13 +28,10 @@ export function useBoard() {
 
     // Run both queries at the same time instead of one after the other.
     const [emp, apps] = await Promise.all([
-      supabase
-        .from('employees')
-        .select('id, display_name, active, created_at')
-        .order('display_name'),
+      supabase.from('employees').select(EMPLOYEE_COLUMNS).order('display_name'),
       supabase
         .from('applications_today')
-        .select('id, employee_id, entered_by_id, created_at, voided, voided_at, void_reason')
+        .select(APPLICATION_COLUMNS)
         .order('created_at', { ascending: false }),
     ])
 

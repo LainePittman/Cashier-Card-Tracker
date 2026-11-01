@@ -20,3 +20,25 @@ export function formatToday(): string {
     day: 'numeric',
   })
 }
+
+/**
+ * Store wall-clock time in the format a datetime-local input uses:
+ * "2026-11-01T14:30". The database turns this back into a real
+ * timestamp using Central time, so both sides agree.
+ */
+export function toStoreInputValue(iso: string = new Date().toISOString()): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: STORE_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(new Date(iso))
+
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? '00'
+
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`
+}

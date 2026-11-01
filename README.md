@@ -32,3 +32,19 @@ To try it on your phone, connect to the same Wi-Fi and open the "Network" addres
 
 `.env.local` is in `.gitignore`, so the keys stay on your computer.
 Never put the **secret** key in this app. It bypasses all database rules.
+
+## Database setup
+
+Run each file in `supabase/migrations/` once, in order, in Supabase → **SQL Editor** → **New query** → paste → **Run**.
+
+| File | What it adds |
+| --- | --- |
+| `001_initial_schema.sql` | Names, card entries, the store-day view, base security rules |
+| `002_lead_role.sql` | Team Member / Lead roles, Lead edit tools, change history |
+
+## Roles
+
+- **Team Member** (everyone by default): log cards for themselves or others, undo a mis-tap within 2 minutes.
+- **Lead**: also change a card's time, move it to another person, add one at an earlier time, and void it (note optional).
+
+Mark someone as a Lead in Supabase → **Table Editor → employees**: set their `role` cell to `lead`. The app itself can't change roles.

@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { formatTime, formatToday } from '../lib/time'
 import type { Application, Employee } from '../lib/types'
+import { ActivityLog } from './ActivityLog'
+import { AddPastCard } from './AddPastCard'
+import { EntryEditor } from './EntryEditor'
 import { NamePicker } from './NamePicker'
 
 const UNDO_WINDOW_MS = 2 * 60 * 1000 // must match the 2 minutes in the database
@@ -32,8 +35,15 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
   const [pickingSomeoneElse, setPickingSomeoneElse] = useState(false)
   const [pendingUndo, setPendingUndo] = useState<PendingUndo | null>(null)
   const [now, setNow] = useState(() => Date.now())
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [addingPast, setAddingPast] = useState(false)
 
-  // Voided entries (undone or voided by a manager) don't count.
+  const isLead = me.role === 'lead'
+
+  // The entry a Lead is editing, if it's still on today's board.
+  const editingEntry = applications.find((a) => a.id === editingId && !a.voided) ?? null
+
+  // Voided entries (undone, or voided by a Lead) don't count.
   const counted = useMemo(() => applications.filter((a) => !a.voided), [applications])
 
   // Build one column per person who has at least one card today.
@@ -133,6 +143,11 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
         <div className="flex items-center justify-between text-sm">
           <p>
             Logging as <span className="font-semibold">{me.display_name}</span>
+            {isLead && (
+              <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                Lead
+              </span>
+            )}
           </p>
           <button type="button" onClick={onSwitchUser} className="text-slate-500 underline">
             Not you?
@@ -178,7 +193,26 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
             Log a card for someone else
           </button>
         )}
+
+        {isLead && !addingPast && (
+          <button
+            type="button"
+            onClick={() => setAddingPast(true)}
+            className="mt-2 w-full rounded-xl border border-amber-300 py-2 text-sm font-medium text-amber-800"
+          >
+            Add a card at an earlier time
+          </button>
+        )}
       </section>
+
+      {isLead && addingPast && (
+        <AddPastCard
+          me={me}
+          employees={employees}
+          onClose={() => setAddingPast(false)}
+          onChanged={onChanged}
+        />
+      )}
 
       {pickingSomeoneElse && (
         <NamePicker
@@ -195,6 +229,9 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
         <h2 className="px-1 text-sm font-semibold uppercase tracking-wide text-slate-500">
           Today by person
         </h2>
+        {isLead && columns.length > 0 && (
+          <p className="px-1 text-xs text-slate-500">Lead: tap a time to edit it.</p>
+        )}
         {columns.length === 0 && (
           <p className="rounded-2xl bg-white p-4 text-center text-sm text-slate-500 shadow-sm">
             No cards yet today.
@@ -204,7 +241,7 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
           <details
             key={employee.id}
             className="group rounded-2xl bg-white shadow-sm"
-            open={employee.id === me.id}
+            open={employee.id === me.id || entries.some((e) => e.id === editingId)}
           >
             <summary className="flex cursor-pointer list-none items-center justify-between p-4">
               <span className="font-medium">
@@ -218,15 +255,60 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
               <span className="text-2xl font-bold tabular-nums">{entries.length}</span>
             </summary>
             <ul className="flex flex-wrap gap-2 px-4 pb-4">
-              {entries.map((entry) => (
-                <li key={entry.id} className="rounded-lg bg-slate-100 px-2 py-1 text-sm tabular-nums">
-                  {formatTime(entry.created_at)}
-                </li>
-              ))}
+              {entries.map((entry) => {
+                const label = (
+                  <>
+                    {formatTime(entry.created_at)}
+                    {entry.edited_at && (
+                      <span className="ml-1 text-amber-700" title="Edited by a Lead">
+                        *
+                      </span>
+                    )}
+                  </>
+                )
+                return (
+                  <li key={entry.id}>
+                    {isLead ? (
+                      <button
+                        type="button"
+                        onClick={() => setEditingId(entry.id === editingId ? null : entry.id)}
+                        className={`rounded-lg px-2 py-1 text-sm tabular-nums ${
+                          entry.id === editingId
+                            ? 'bg-amber-200'
+                            : 'bg-slate-100 hover:bg-amber-100'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ) : (
+                      <span className="block rounded-lg bg-slate-100 px-2 py-1 text-sm tabular-nums">
+                        {label}
+                      </span>
+                    )}
+                  </li>
+                )
+              })}
             </ul>
+            {isLead && editingEntry && editingEntry.employee_id === employee.id && (
+              <div className="px-2 pb-2">
+                <EntryEditor
+                  key={editingEntry.id}
+                  entry={editingEntry}
+                  me={me}
+                  employees={employees}
+                  onClose={() => setEditingId(null)}
+                  onChanged={onChanged}
+                />
+              </div>
+            )}
           </details>
         ))}
+        {columns.some((c) => c.entries.some((e) => e.edited_at)) && (
+          <p className="px-1 text-xs text-slate-500">* time or person changed by a Lead</p>
+        )}
       </section>
+
+      <ActivityLog applications={applications} employees={employees} />
     </div>
   )
 }

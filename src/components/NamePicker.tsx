@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Employee } from '../lib/types'
+import { EMPLOYEE_COLUMNS, type Employee } from '../lib/types'
 
 type Props = {
   employees: Employee[]
@@ -33,7 +33,7 @@ export function NamePicker({ employees, title, subtitle, onPick, onCancel }: Pro
     const { data, error } = await supabase
       .from('employees')
       .insert({ display_name: name })
-      .select('id, display_name, active, created_at')
+      .select(EMPLOYEE_COLUMNS)
       .single()
 
     setSaving(false)
