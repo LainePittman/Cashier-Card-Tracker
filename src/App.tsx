@@ -61,10 +61,7 @@ function TrackerScreen() {
         employees={employees}
         title="Who are you?"
         subtitle="Tap your name. This phone will remember it."
-        onPick={(employee) => {
-          setEmployeeId(employee.id)
-          reload() // make sure a just-added name is in the list
-        }}
+        onPick={(employee) => setEmployeeId(employee.id)}
       />
     )
   }
