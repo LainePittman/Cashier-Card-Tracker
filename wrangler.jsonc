@@ -1,0 +1,11 @@
+// Cloudflare deploy settings.
+// `npm run build` puts the finished site in ./dist; Cloudflare serves it.
+{
+  "name": "cashier-card-tracker",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    // Any unknown path loads the app instead of a 404.
+    "not_found_handling": "single-page-application"
+  }
+}
