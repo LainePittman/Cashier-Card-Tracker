@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { addPastCard } from '../lib/leadActions'
-import { toStoreInputValue } from '../lib/time'
+import { todayAt, toStoreTimeValue } from '../lib/time'
 import type { Employee } from '../lib/types'
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
   const activeEmployees = employees.filter((e) => e.active)
   const [forId, setForId] = useState(activeEmployees[0]?.id ?? '')
-  const [time, setTime] = useState(() => toStoreInputValue())
+  const [time, setTime] = useState(() => toStoreTimeValue())
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -23,7 +23,7 @@ export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
     if (!forId || !time) return
     setBusy(true)
     setError(null)
-    const message = await addPastCard(me.id, forId, time)
+    const message = await addPastCard(me.id, forId, todayAt(time))
     setBusy(false)
     if (message) {
       setError(message)
@@ -63,13 +63,12 @@ export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
       </select>
 
       <label htmlFor="past-time" className="mt-3 block text-sm font-medium text-slate-700">
-        When?
+        What time today?
       </label>
       <input
         id="past-time"
-        type="datetime-local"
+        type="time"
         value={time}
-        max={toStoreInputValue()}
         onChange={(e) => setTime(e.target.value)}
         className="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2"
       />

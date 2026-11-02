@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { changeTime, moveCard, voidCard } from '../lib/leadActions'
-import { formatTime, toStoreInputValue } from '../lib/time'
+import { formatTime, todayAt, toStoreTimeValue } from '../lib/time'
 import type { Application, Employee } from '../lib/types'
 
 type Props = {
@@ -13,11 +13,12 @@ type Props = {
 
 /**
  * Lead-only panel for one card entry: change its time, move it to
- * someone else, or void it. Each action saves on its own button, so a
+ * someone else, or remove it.  ("Remove" voids the entry: it drops out
+ * of the totals but stays in today's log, crossed out.) Each action saves on its own button, so a
  * Lead can't change two things by accident.
  */
 export function EntryEditor({ entry, me, employees, onClose, onChanged }: Props) {
-  const [time, setTime] = useState(() => toStoreInputValue(entry.created_at))
+  const [time, setTime] = useState(() => toStoreTimeValue(entry.created_at))
   const [moveTo, setMoveTo] = useState(entry.employee_id)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
@@ -66,16 +67,15 @@ export function EntryEditor({ entry, me, employees, onClose, onChanged }: Props)
         <div className="mt-1 flex gap-2">
           <input
             id="edit-time"
-            type="datetime-local"
+            type="time"
             value={time}
-            max={toStoreInputValue()}
             onChange={(e) => setTime(e.target.value)}
             className="min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2"
           />
           <button
             type="button"
-            disabled={busy || !time || time === toStoreInputValue(entry.created_at)}
-            onClick={() => run(() => changeTime(me.id, entry.id, time))}
+            disabled={busy || !time || time === toStoreTimeValue(entry.created_at)}
+            onClick={() => run(() => changeTime(me.id, entry.id, todayAt(time)))}
             className="rounded-xl bg-slate-900 px-4 py-2 font-medium text-white disabled:opacity-40"
           >
             Save
@@ -112,10 +112,10 @@ export function EntryEditor({ entry, me, employees, onClose, onChanged }: Props)
         </div>
       </div>
 
-      {/* Void */}
+      {/* Remove (void) */}
       <div className="mt-4 border-t border-slate-100 pt-4">
         <label htmlFor="edit-note" className="text-sm font-medium text-slate-700">
-          Void this entry <span className="font-normal text-slate-500">(note optional)</span>
+          Remove this card <span className="font-normal text-slate-500">(note optional)</span>
         </label>
         <div className="mt-1 flex gap-2">
           <input
@@ -132,7 +132,7 @@ export function EntryEditor({ entry, me, employees, onClose, onChanged }: Props)
             onClick={() => run(() => voidCard(me.id, entry.id, note))}
             className="rounded-xl bg-red-600 px-4 py-2 font-medium text-white disabled:opacity-40"
           >
-            Void
+            Remove
           </button>
         </div>
       </div>

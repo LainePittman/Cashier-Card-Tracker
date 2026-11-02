@@ -42,9 +42,9 @@ export function ActivityLog({ applications, employees }: Props) {
                   {a.edited_at && <span className="text-amber-700">edited by a Lead</span>}
                   {a.voided && (
                     <span className="text-red-600">
-                      voided
+                      {a.voided_by_employee_id ? 'removed' : 'undone'}
                       {a.voided_by_employee_id && ` by ${nameOf(a.voided_by_employee_id)}`}
-                      {a.void_reason && `: ${a.void_reason}`}
+                      {a.voided_by_employee_id && a.void_reason && `: ${a.void_reason}`}
                     </span>
                   )}
                 </div>

@@ -42,3 +42,16 @@ export function toStoreInputValue(iso: string = new Date().toISOString()): strin
 
   return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`
 }
+
+/** Just the time part, for a time-only input: "14:30". */
+export function toStoreTimeValue(iso: string = new Date().toISOString()): string {
+  return toStoreInputValue(iso).slice(11)
+}
+
+/**
+ * Turns a time-only input ("14:30") into the full store wall-clock value
+ * the database expects, using today's date in Central time.
+ */
+export function todayAt(time: string): string {
+  return `${toStoreInputValue().slice(0, 10)}T${time}`
+}

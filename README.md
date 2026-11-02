@@ -45,6 +45,6 @@ Run each file in `supabase/migrations/` once, in order, in Supabase → **SQL Ed
 ## Roles
 
 - **Team Member** (everyone by default): log cards for themselves or others, undo a mis-tap within 2 minutes.
-- **Lead**: also change a card's time, move it to another person, add one at an earlier time, and void it (note optional).
+- **Lead**: also change a card's time, move it to another person, add one at an earlier time, and remove it (note optional). Removed cards drop out of the totals but stay in today's log, crossed out.
 
 Mark someone as a Lead in Supabase → **Table Editor → employees**: set their `role` cell to `lead`. The app itself can't change roles.

@@ -230,7 +230,9 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
           Today by person
         </h2>
         {isLead && columns.length > 0 && (
-          <p className="px-1 text-xs text-slate-500">Lead: tap a time to edit it.</p>
+          <p className="px-1 text-xs text-slate-500">
+            Lead: tap a time to change it, move it, or remove it.
+          </p>
         )}
         {columns.length === 0 && (
           <p className="rounded-2xl bg-white p-4 text-center text-sm text-slate-500 shadow-sm">
