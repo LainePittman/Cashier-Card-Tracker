@@ -59,3 +59,9 @@ insert into public.employees (display_name) values ('Jordan M'), ('Sam T');
 ```
 
 To hide someone who left, set their `active` to `false`. Their past cards stay in the history.
+
+## Copyright
+
+Copyright © 2026 Steven "Laine" Pittman. All rights reserved.
+
+This source code is shared publicly for viewing only. No permission is granted to copy, modify, distribute, or use it, in whole or in part, without the author's prior written consent.
