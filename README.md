@@ -60,6 +60,26 @@ insert into public.employees (display_name) values ('Jordan M'), ('Sam T');
 
 To hide someone who left, set their `active` to `false`. Their past cards stay in the history.
 
+## Development vs. production
+
+| | Production (live) | Development (testing) |
+| --- | --- | --- |
+| Code | `main` branch | a feature branch, e.g. `feature/leaderboard` |
+| Database | live Supabase project | separate dev Supabase project with fake names (`supabase/seed_dev.sql`) |
+| Where it runs | card-tracker...workers.dev | `npm run dev` on your computer (and optional Cloudflare preview builds) |
+
+`.env.local` should point at the **dev** Supabase project. Production keys live only in Cloudflare's build variables.
+
+**Workflow for a new feature**
+
+1. `git checkout main && git pull`, then `git checkout -b feature/<name>`.
+2. Build and test with `npm run dev` against the dev database.
+3. Database changes go in a new numbered file in `supabase/migrations/`. Run it on dev first.
+4. When it works: run `npm run build`, commit, push the branch, and merge it into `main` on GitHub (pull request).
+5. Run the new migration on the **production** database, then let Cloudflare deploy `main`.
+
+Run the database change on production *before* the code that depends on it goes live.
+
 ## Copyright
 
 Copyright © 2026 Steven "Laine" Pittman. All rights reserved.
