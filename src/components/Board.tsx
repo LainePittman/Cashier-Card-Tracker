@@ -6,6 +6,7 @@ import type { Application, Employee } from '../lib/types'
 import { ActivityLog } from './ActivityLog'
 import { AddPastCard } from './AddPastCard'
 import { EntryEditor } from './EntryEditor'
+import { GoalProgress } from './GoalProgress'
 import { InstallHelp } from './InstallHelp'
 import { NamePicker } from './NamePicker'
 
@@ -167,9 +168,7 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
         >
           {myCount === 0 ? '+ Got my first card' : '+ Got a card'}
         </button>
-        <p className="mt-2 text-center text-sm text-slate-500">
-          You have {myCount} today
-        </p>
+        <GoalProgress count={myCount} />
 
         {pendingUndo && (
           <div className="mt-3 flex items-center justify-between rounded-xl bg-slate-900 px-4 py-3 text-sm text-white">
