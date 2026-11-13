@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { assignMedals, MEDAL_EMOJI, MEDAL_LABEL } from '../lib/medals'
+import { MEDAL_EMOJI, MEDAL_LABEL, medalsForToday } from '../lib/medals'
 import { formatTime, formatToday } from '../lib/time'
 import type { Application, Employee } from '../lib/types'
 import { ActivityLog } from './ActivityLog'
@@ -69,10 +69,7 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
   }, [employees, counted])
 
   // Gold, silver, bronze for today's top three (ties share a medal).
-  const medals = useMemo(
-    () => assignMedals(new Map(columns.map((c) => [c.employee.id, c.entries.length]))),
-    [columns],
-  )
+  const medals = useMemo(() => medalsForToday(applications), [applications])
 
   const myCount = columns.find((c) => c.employee.id === me.id)?.entries.length ?? 0
 

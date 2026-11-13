@@ -36,3 +36,14 @@ export const MEDAL_LABEL: Record<Medal, string> = {
   silver: 'Silver: second most cards today',
   bronze: 'Bronze: third most cards today',
 }
+
+/** Medals from today's entries: counts each person's non-voided cards. */
+export function medalsForToday(
+  applications: { employee_id: string; voided: boolean }[],
+): Map<string, Medal> {
+  const counts = new Map<string, number>()
+  for (const a of applications) {
+    if (!a.voided) counts.set(a.employee_id, (counts.get(a.employee_id) ?? 0) + 1)
+  }
+  return assignMedals(counts)
+}
