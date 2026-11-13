@@ -1,19 +1,22 @@
 import { useState, type FormEvent } from 'react'
-import { addPastCard } from '../lib/leadActions'
+import { addEarlierCard } from '../lib/cardActions'
 import { todayAt, toStoreTimeValue } from '../lib/time'
 import type { Employee } from '../lib/types'
 
 type Props = {
-  me: Employee // must be a Lead
+  me: Employee // whoever is logging it
   employees: Employee[]
   onClose: () => void
   onChanged: () => void
 }
 
-/** Lead-only form to log a card someone forgot, at the time it happened. */
+/**
+ * Anyone can log a card that was forgotten earlier today, for themselves
+ * or someone else, at the time it actually happened.
+ */
 export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
   const activeEmployees = employees.filter((e) => e.active)
-  const [forId, setForId] = useState(activeEmployees[0]?.id ?? '')
+  const [forId, setForId] = useState(me.id) // most forgotten cards are your own
   const [time, setTime] = useState(() => toStoreTimeValue())
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,7 +26,7 @@ export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
     if (!forId || !time) return
     setBusy(true)
     setError(null)
-    const message = await addPastCard(me.id, forId, todayAt(time))
+    const message = await addEarlierCard(me.id, forId, todayAt(time))
     setBusy(false)
     if (message) {
       setError(message)
@@ -34,7 +37,7 @@ export function AddPastCard({ me, employees, onClose, onChanged }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl border-2 border-amber-300 bg-white p-4 shadow-sm">
+    <form onSubmit={submit} className="rounded-2xl border-2 border-slate-300 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-lg font-semibold">Add a card at an earlier time</h2>
         <button

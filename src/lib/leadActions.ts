@@ -11,15 +11,6 @@ async function call(fn: string, args: Record<string, unknown>): Promise<string |
   return error ? error.message : null
 }
 
-/** localTime is store wall-clock time like "2026-11-01T14:30". */
-export function addPastCard(actorId: string, forEmployeeId: string, localTime: string) {
-  return call('lead_add_application', {
-    actor_id: actorId,
-    for_employee_id: forEmployeeId,
-    at_local_time: localTime,
-  })
-}
-
 export function changeTime(actorId: string, appId: string, localTime: string) {
   return call('lead_change_time', {
     actor_id: actorId,
