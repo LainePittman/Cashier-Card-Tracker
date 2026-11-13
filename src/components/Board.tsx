@@ -198,18 +198,18 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
           </button>
         )}
 
-        {isLead && !addingPast && (
+        {!addingPast && (
           <button
             type="button"
             onClick={() => setAddingPast(true)}
-            className="mt-2 w-full rounded-xl border border-amber-300 py-2 text-sm font-medium text-amber-800"
+            className="mt-2 w-full rounded-xl border border-slate-300 py-2 text-sm font-medium text-slate-700"
           >
             Add a card at an earlier time
           </button>
         )}
       </section>
 
-      {isLead && addingPast && (
+      {addingPast && (
         <AddPastCard
           me={me}
           employees={employees}

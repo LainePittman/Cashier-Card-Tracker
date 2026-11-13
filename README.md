@@ -42,11 +42,12 @@ Run each file in `supabase/migrations/` once, in order, in Supabase → **SQL Ed
 | `001_initial_schema.sql` | Names, card entries, the store-day view, base security rules |
 | `002_lead_role.sql` | Team Member / Lead roles, Lead edit tools, change history |
 | `003_names_admin_only.sql` | Only you can add names (from Supabase); the app can't |
+| `004_anyone_adds_earlier_cards.sql` | Anyone can add a card at an earlier time today |
 
 ## Roles
 
-- **Team Member** (everyone by default): log cards for themselves or others, undo a mis-tap within 2 minutes.
-- **Lead**: also change a card's time, move it to another person, add one at an earlier time, and remove it (note optional). Removed cards drop out of the totals but stay in today's log, crossed out.
+- **Team Member** (everyone by default): log cards for themselves or others, add a forgotten card at an earlier time today, undo a mis-tap within 2 minutes.
+- **Lead**: also change a card's time, move it to another person, and remove it (note optional). Removed cards drop out of the totals but stay in today's log, crossed out.
 
 Mark someone as a Lead in Supabase → **Table Editor → employees**: set their `role` cell to `lead`. The app itself can't change roles.
 
