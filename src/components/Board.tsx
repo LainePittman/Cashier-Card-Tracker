@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { MEDAL_EMOJI, MEDAL_LABEL, medalsForToday } from '../lib/medals'
 import { formatTime, formatToday } from '../lib/time'
 import type { Application, Employee } from '../lib/types'
 import { ActivityLog } from './ActivityLog'
@@ -66,6 +67,9 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
         a.employee.display_name.localeCompare(b.employee.display_name),
     )
   }, [employees, counted])
+
+  // Gold, silver, bronze for today's top three (ties share a medal).
+  const medals = useMemo(() => medalsForToday(applications), [applications])
 
   const myCount = columns.find((c) => c.employee.id === me.id)?.entries.length ?? 0
 
@@ -247,6 +251,16 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
           >
             <summary className="flex cursor-pointer list-none items-center justify-between p-4">
               <span className="font-medium">
+                {medals.has(employee.id) && (
+                  <span
+                    className="mr-1.5"
+                    role="img"
+                    aria-label={MEDAL_LABEL[medals.get(employee.id)!]}
+                    title={MEDAL_LABEL[medals.get(employee.id)!]}
+                  >
+                    {MEDAL_EMOJI[medals.get(employee.id)!]}
+                  </span>
+                )}
                 {employee.display_name}
                 {employee.id === me.id && (
                   <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800">

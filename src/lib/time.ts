@@ -55,3 +55,20 @@ export function toStoreTimeValue(iso: string = new Date().toISOString()): string
 export function todayAt(time: string): string {
   return `${toStoreInputValue().slice(0, 10)}T${time}`
 }
+
+/**
+ * "Good morning" before noon, "Good afternoon" until 5 PM, then
+ * "Good evening", all in store (Central) time.
+ */
+export function greetingFor(date: Date = new Date()): string {
+  const hour = Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: STORE_TIME_ZONE,
+      hour: 'numeric',
+      hourCycle: 'h23',
+    }).format(date),
+  )
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
