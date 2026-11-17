@@ -8,6 +8,7 @@ import { AddPastCard } from './AddPastCard'
 import { EntryEditor } from './EntryEditor'
 import { GoalProgress } from './GoalProgress'
 import { InstallHelp } from './InstallHelp'
+import { ManageNames } from './ManageNames'
 import { NamePicker } from './NamePicker'
 
 const UNDO_WINDOW_MS = 2 * 60 * 1000 // must match the 2 minutes in the database
@@ -325,6 +326,8 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
       </section>
 
       <ActivityLog applications={applications} employees={employees} />
+
+      {isLead && <ManageNames me={me} employees={employees} onChanged={onChanged} />}
 
       <InstallHelp />
     </div>

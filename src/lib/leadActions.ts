@@ -34,3 +34,17 @@ export function voidCard(actorId: string, appId: string, note: string) {
     note: note.trim() || null,
   })
 }
+
+/** Add a name to the list (always as a Team Member). Restores it if it was removed. */
+export function addEmployee(actorId: string, name: string) {
+  return call('lead_add_employee', { actor_id: actorId, new_name: name })
+}
+
+/** Remove a name from the list (active = false) or restore it (active = true). */
+export function setEmployeeActive(actorId: string, targetId: string, active: boolean) {
+  return call('lead_set_employee_active', {
+    actor_id: actorId,
+    target_id: targetId,
+    make_active: active,
+  })
+}
