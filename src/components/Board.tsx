@@ -19,6 +19,7 @@ type Props = {
   applications: Application[]
   onSwitchUser: () => void
   onChanged: () => void
+  onOpenStats: () => void
 }
 
 type PendingUndo = {
@@ -33,7 +34,7 @@ type Column = {
   entries: Application[]
 }
 
-export function Board({ me, employees, applications, onSwitchUser, onChanged }: Props) {
+export function Board({ me, employees, applications, onSwitchUser, onChanged, onOpenStats }: Props) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pickingSomeoneElse, setPickingSomeoneElse] = useState(false)
@@ -324,6 +325,17 @@ export function Board({ me, employees, applications, onSwitchUser, onChanged }: 
           <p className="px-1 text-xs text-slate-500">* time or person changed by a Lead</p>
         )}
       </section>
+
+      <button
+        type="button"
+        onClick={onOpenStats}
+        className="w-full rounded-2xl bg-white p-4 text-left font-semibold shadow-sm hover:bg-slate-50"
+      >
+        📈 Weekly stats
+        <span className="block text-sm font-normal text-slate-500">
+          Your cards and the store's, day by day
+        </span>
+      </button>
 
       <ActivityLog applications={applications} employees={employees} />
 

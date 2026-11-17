@@ -2,8 +2,10 @@ import type { ReactNode } from 'react'
 import { Board } from './components/Board'
 import { Header } from './components/Header'
 import { NamePicker } from './components/NamePicker'
+import { WeeklyStats } from './components/WeeklyStats'
 import { useBoard } from './hooks/useBoard'
 import { useCurrentEmployee } from './hooks/useCurrentEmployee'
+import { useHashRoute } from './hooks/useHashRoute'
 import { medalsForToday, type Medal } from './lib/medals'
 import { isSupabaseConfigured } from './lib/supabase'
 import type { Employee } from './lib/types'
@@ -38,6 +40,7 @@ function Page({ me, myMedal, children }: { me?: Employee; myMedal?: Medal; child
 function TrackerScreen() {
   const { employees, applications, loading, error, reload } = useBoard()
   const { employeeId, setEmployeeId } = useCurrentEmployee()
+  const { route, go } = useHashRoute()
 
   if (loading) {
     return (
@@ -85,13 +88,18 @@ function TrackerScreen() {
 
   return (
     <Page me={me} myMedal={myMedal}>
-      <Board
-        me={me}
-        employees={employees}
-        applications={applications}
-        onSwitchUser={() => setEmployeeId(null)}
-        onChanged={reload}
-      />
+      {route === 'stats' ? (
+        <WeeklyStats me={me} todaysApplications={applications} onBack={() => go('')} />
+      ) : (
+        <Board
+          me={me}
+          employees={employees}
+          applications={applications}
+          onSwitchUser={() => setEmployeeId(null)}
+          onChanged={reload}
+          onOpenStats={() => go('#/stats')}
+        />
+      )}
     </Page>
   )
 }
